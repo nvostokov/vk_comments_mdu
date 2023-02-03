@@ -51,7 +51,7 @@ body {
 button {
     width: 250px;
     color: #252B42;
-    height: 50px;
+    height: auto;
 }
 
 .info__list li {
