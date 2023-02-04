@@ -1,5 +1,6 @@
 
-	$('#load').on('click', loadComments);
+	$('#load').on('click', loadComments); //запуск по кнопке
+/* $('#load').ready(loadComments); */
 
 	function getUrl(method, params) {
 		if (!method) throw new Error('Вы не указали метод');
@@ -17,19 +18,23 @@
 		});
 	}
 
+	let urlDomain = "otkrytiiarkhangelsk";
+
 	function loadComments() {
-		sendRequest('wall.search', {/* owner_id: -10564356, */ domain: "otkrytiiarkhangelsk", count: 50, query: "МДУ", query: "Мезенское", query: "дороги", query: "мезенцы", query: "дорожники", query: "тротуар", v: 5.131}, function (data) {
+		sendRequest('wall.search', {/* owner_id: -10564356, */ domain: urlDomain, count: 50, query: "МДУ", query: "Мезенское", query: "дороги", query: "мезенцы", query: "дорожники", query: "тротуар", v: 5.131}, function (data) {
 			drawComments(data.response.items);
             console.log(data.response);
 		});
 	}
 
     function drawComments(comments) {
-        var html = '';
+        let html = '';
 
-        for (var i = 0; i < comments.length; i++) {
+        for (let i = 0; i < comments.length; i++) {
             
-            var f = comments[i];
+            let f = comments[i];
+
+			//преобразование даты, сначала в GMT, потом в русское наименование
 
             newDate = new Date(f.date*1000);
 
@@ -37,13 +42,39 @@
 
             console.log(typeof(newDate));
 
+			let a = new Date(newDate);
+
+			let timeNext = [
+				addLeadZero(a.getHours()),
+				addLeadZero(a.getMinutes()),
+				].join(':');
+
+			let dateNext = [
+				addLeadZero(a.getDate()),
+				addLeadZero(a.getMonth() + 1),
+				a.getFullYear()].join('.');
+
+				console.log(timeNext);
+				console.log(dateNext);
+
+			function addLeadZero(val) {
+			if (+val < 10) return '0' + val;
+			return val;
+			};
+
+			//вывод в html
+
             html += '<li>' + 
                         '<div>'
-                            + '<p>' + newDate + '</p>' 
+                            + '<p class="info__date">' + dateNext + ' ' + timeNext + '</p>' 
                             +'<h4>' + f.text + '</h4>'
-                            + '<a target="_blank" href="https://vk.com/otkrytiiarkhangelsk?w=wall' + /* f.from_id */ '-161193561' + '_' + f.post_id + '">' 
-                            + 'Ссылка' + '</a>' 
+/*                             + '<a target="_blank" href="https://vk.com/otkrytiiarkhangelsk?w=wall' + '-161193561' + '_' + f.post_id + '">' 
+							+ 'Ссылка' + '</a>'  */
                         +'</div>'
+						+ '<div class="info__link">'
+							+ '<a target="_blank" href="https://vk.com/' + urlDomain + '?w=wall' + /* f.from_id */ f.owner_id + '_' + f.post_id + '">' 
+							+ 'ссылка на пост' + '</a>' 
+						+'</div>'
                 + '</li>';
         }
 
