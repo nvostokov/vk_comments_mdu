@@ -44,7 +44,7 @@ body {
     margin-top: 20px;
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     margin-bottom: 20px;
 }
 
